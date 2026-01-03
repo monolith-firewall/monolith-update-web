@@ -1,0 +1,59 @@
+@model List<MonolithPackage>
+@{
+    ViewData["Title"] = "Packages";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Packages</h1>
+    <a href="/Admin/Packages/Create" class="btn btn-primary">Create New Package</a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Package Name</th>
+                    <th>Package Code</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var package in Model)
+                {
+                    <tr>
+                        <td><strong>@package.PackageName</strong></td>
+                        <td><code>@package.PackageCode</code></td>
+                        <td>@package.Description</td>
+                        <td>
+                            @if (package.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="/Admin/Packages/Edit/@package.Id" class="btn btn-sm btn-warning">Edit</a>
+                            <form method="post" action="/Admin/Packages/Delete/@package.Id" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure? This will delete all package updates as well.');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        No packages found. <a href="/Admin/Packages/Create">Create your first package</a>
+    </div>
+}
