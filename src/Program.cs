@@ -92,25 +92,6 @@ else
                 Console.WriteLine("Default admin user created: admin@monolith.com / Admin123!");
             }
         }
-
-        // Set RequirePasswordChange for all existing users
-        var existingUsers = await context.Users.ToListAsync();
-        bool anyUpdated = false;
-
-        foreach (var existingUser in existingUsers)
-        {
-            if (!existingUser.RequirePasswordChange)
-            {
-                existingUser.RequirePasswordChange = true;
-                anyUpdated = true;
-            }
-        }
-
-        if (anyUpdated)
-        {
-            await context.SaveChangesAsync();
-            Console.WriteLine($"Updated {existingUsers.Count} existing user(s) to require password change.");
-        }
     }
     catch (Exception ex)
     {
