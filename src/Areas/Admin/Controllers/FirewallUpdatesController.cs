@@ -22,8 +22,6 @@ public class FirewallUpdatesController : Controller
         _fileStorageService = fileStorageService;
     }
 
-    [HttpGet("")]
-    [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
         var updates = await _context.FirewallUpdates
@@ -34,7 +32,6 @@ public class FirewallUpdatesController : Controller
         return View(updates);
     }
 
-    [HttpGet("Create")]
     public async Task<IActionResult> Create()
     {
         var model = new FirewallUpdateViewModel
@@ -45,7 +42,7 @@ public class FirewallUpdatesController : Controller
         return View(model);
     }
 
-    [HttpPost("Create")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(FirewallUpdateViewModel model)
     {
@@ -97,7 +94,6 @@ public class FirewallUpdatesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet("Edit/{id}")]
     public async Task<IActionResult> Edit(int id)
     {
         var update = await _context.FirewallUpdates
@@ -129,7 +125,7 @@ public class FirewallUpdatesController : Controller
         return View(model);
     }
 
-    [HttpPost("Edit/{id}")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, FirewallUpdateViewModel model)
     {
@@ -180,7 +176,7 @@ public class FirewallUpdatesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost("Delete/{id}")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {

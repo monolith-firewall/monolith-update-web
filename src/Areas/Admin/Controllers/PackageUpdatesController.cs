@@ -22,8 +22,6 @@ public class PackageUpdatesController : Controller
         _fileStorageService = fileStorageService;
     }
 
-    [HttpGet("")]
-    [HttpGet("Index")]
     public async Task<IActionResult> Index(int? packageId)
     {
         var query = _context.PackageUpdates
@@ -46,7 +44,6 @@ public class PackageUpdatesController : Controller
         return View(updates);
     }
 
-    [HttpGet("Create")]
     public async Task<IActionResult> Create()
     {
         var model = new PackageUpdateViewModel
@@ -57,7 +54,7 @@ public class PackageUpdatesController : Controller
         return View(model);
     }
 
-    [HttpPost("Create")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(PackageUpdateViewModel model)
     {
@@ -112,7 +109,6 @@ public class PackageUpdatesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet("Edit/{id}")]
     public async Task<IActionResult> Edit(int id)
     {
         var update = await _context.PackageUpdates
@@ -147,7 +143,7 @@ public class PackageUpdatesController : Controller
         return View(model);
     }
 
-    [HttpPost("Edit/{id}")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, PackageUpdateViewModel model)
     {
@@ -198,7 +194,7 @@ public class PackageUpdatesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost("Delete/{id}")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {

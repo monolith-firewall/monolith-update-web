@@ -18,8 +18,6 @@ public class FirewallVersionsController : Controller
         _context = context;
     }
 
-    [HttpGet("")]
-    [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
         var versions = await _context.FirewallVersions
@@ -28,13 +26,12 @@ public class FirewallVersionsController : Controller
         return View(versions);
     }
 
-    [HttpGet("Create")]
     public IActionResult Create()
     {
         return View(new FirewallVersionViewModel());
     }
 
-    [HttpPost("Create")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(FirewallVersionViewModel model)
     {
@@ -68,7 +65,6 @@ public class FirewallVersionsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet("Edit/{id}")]
     public async Task<IActionResult> Edit(int id)
     {
         var version = await _context.FirewallVersions.FindAsync(id);
@@ -89,7 +85,7 @@ public class FirewallVersionsController : Controller
         return View(model);
     }
 
-    [HttpPost("Edit/{id}")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, FirewallVersionViewModel model)
     {
@@ -120,7 +116,7 @@ public class FirewallVersionsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost("Delete/{id}")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {

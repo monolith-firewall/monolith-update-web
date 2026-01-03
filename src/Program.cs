@@ -54,9 +54,8 @@ app.UseMiddleware<PasswordChangeRequiredMiddleware>();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "admin",
-    pattern: "Admin/{controller=Dashboard}/{action=Index}/{id?}",
-    defaults: new { area = "Admin" });
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
