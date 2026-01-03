@@ -55,7 +55,8 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "admin",
-    pattern: "Admin/{controller=Dashboard}/{action=Index}/{id?}");
+    pattern: "Admin/{controller=Dashboard}/{action=Index}/{id?}",
+    defaults: new { area = "Admin" });
 
 app.MapControllerRoute(
     name: "default",

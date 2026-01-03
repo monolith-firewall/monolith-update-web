@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MonolithUpdateSite.Data;
 
-namespace MonolithUpdateSite.Controllers.Admin;
+namespace MonolithUpdateSite.Areas.Admin.Controllers;
 
+[Area("Admin")]
 [Authorize]
-[Route("Admin/[controller]")]
 public class DashboardController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -16,8 +16,6 @@ public class DashboardController : Controller
         _context = context;
     }
 
-    [HttpGet("")]
-    [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
         var firewallVersionsCount = await _context.FirewallVersions.CountAsync(v => v.IsActive);

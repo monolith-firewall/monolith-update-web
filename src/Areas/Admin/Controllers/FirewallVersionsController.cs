@@ -5,10 +5,10 @@ using MonolithUpdateSite.Data;
 using MonolithUpdateSite.Models.Domain;
 using MonolithUpdateSite.Models.ViewModels;
 
-namespace MonolithUpdateSite.Controllers.Admin;
+namespace MonolithUpdateSite.Areas.Admin.Controllers;
 
+[Area("Admin")]
 [Authorize]
-[Route("Admin/[controller]")]
 public class FirewallVersionsController : Controller
 {
     private readonly ApplicationDbContext _context;

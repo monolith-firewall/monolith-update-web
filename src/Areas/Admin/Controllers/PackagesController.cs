@@ -5,10 +5,10 @@ using MonolithUpdateSite.Data;
 using MonolithUpdateSite.Models.Domain;
 using MonolithUpdateSite.Models.ViewModels;
 
-namespace MonolithUpdateSite.Controllers.Admin;
+namespace MonolithUpdateSite.Areas.Admin.Controllers;
 
+[Area("Admin")]
 [Authorize]
-[Route("Admin/[controller]")]
 public class PackagesController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -18,8 +18,6 @@ public class PackagesController : Controller
         _context = context;
     }
 
-    [HttpGet("")]
-    [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
         var packages = await _context.MonolithPackages
@@ -28,13 +26,12 @@ public class PackagesController : Controller
         return View(packages);
     }
 
-    [HttpGet("Create")]
     public IActionResult Create()
     {
         return View(new PackageViewModel());
     }
 
-    [HttpPost("Create")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(PackageViewModel model)
     {
@@ -68,7 +65,6 @@ public class PackagesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet("Edit/{id}")]
     public async Task<IActionResult> Edit(int id)
     {
         var package = await _context.MonolithPackages.FindAsync(id);
@@ -89,7 +85,7 @@ public class PackagesController : Controller
         return View(model);
     }
 
-    [HttpPost("Edit/{id}")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, PackageViewModel model)
     {
@@ -120,7 +116,7 @@ public class PackagesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost("Delete/{id}")]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
