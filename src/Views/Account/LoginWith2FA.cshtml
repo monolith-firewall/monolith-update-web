@@ -1,0 +1,49 @@
+@model Verify2FAViewModel
+@{
+    ViewData["Title"] = "Two-Factor Authentication";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Two-Factor Authentication</h2>
+
+                <p class="text-center text-muted mb-4">
+                    Enter the 6-digit code from your authenticator app
+                </p>
+
+                <form method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <input type="hidden" asp-for="ReturnUrl" />
+
+                    <div class="mb-3">
+                        <label asp-for="TwoFactorCode" class="form-label"></label>
+                        <input asp-for="TwoFactorCode" class="form-control text-center" placeholder="000000" maxlength="6" autocomplete="off" autofocus style="font-size: 1.5rem; letter-spacing: 0.5rem;" />
+                        <span asp-validation-for="TwoFactorCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="RememberMachine" class="form-check-input" />
+                        <label asp-for="RememberMachine" class="form-check-label"></label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Verify</button>
+                </form>
+
+                <hr class="my-3" />
+
+                <div class="text-center">
+                    <small class="text-muted">
+                        Lost your device? Use a <a href="#" onclick="alert('Enter a recovery code in the code field above'); return false;">recovery code</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

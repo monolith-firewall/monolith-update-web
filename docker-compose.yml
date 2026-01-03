@@ -11,9 +11,9 @@ services:
       - "5002:5000"
     volumes:
       # Persist database
-      - ./data:/app/data
+      - monolith-data:/app/data
       # Persist uploaded update files
-      - ./wwwroot/updates:/app/wwwroot/updates
+      - monolith-updates:/app/wwwroot/updates
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5000

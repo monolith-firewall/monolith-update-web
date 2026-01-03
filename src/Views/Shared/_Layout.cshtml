@@ -35,10 +35,31 @@
                                 <a class="nav-link" href="/Admin/PackageUpdates">Package Updates</a>
                             </li>
                         </ul>
-                        <form method="post" action="/Account/Logout" class="d-flex">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-outline-light">Logout</button>
-                        </form>
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white" href="#" id="userMenuDropdown" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    @User.Identity?.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
+                                    <li><h6 class="dropdown-header">@User.Identity?.Name</h6></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="/Account/ChangePassword">Change Password</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/Account/Manage2FA">Two-Factor Authentication</a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form method="post" action="/Account/Logout" class="px-3">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="dropdown-item text-danger">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                     </div>
                 }
             </div>

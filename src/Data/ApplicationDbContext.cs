@@ -4,7 +4,7 @@ using MonolithUpdateSite.Models.Domain;
 
 namespace MonolithUpdateSite.Data;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -19,6 +19,16 @@ public class ApplicationDbContext : IdentityDbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<ApplicationUser>(entity =>
+        {
+            entity.Property(e => e.RequirePasswordChange).IsRequired();
+            entity.HasIndex(e => e.RequirePasswordChange);
+
+            entity.Property(e => e.TwoFactorSetupCompleted).IsRequired();
+            entity.Property(e => e.RecoveryCodes).HasMaxLength(1000);
+            entity.HasIndex(e => e.TwoFactorEnabled);
+        });
 
         builder.Entity<FirewallVersion>(entity =>
         {

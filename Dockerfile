@@ -28,6 +28,9 @@ COPY --from=publish /app/publish .
 # Create directories for data persistence
 RUN mkdir -p /app/data /app/wwwroot/updates
 
+# Declare volumes for persistence
+VOLUME ["/app/data", "/app/wwwroot/updates"]
+
 # Set environment variables
 ENV ASPNETCORE_URLS=http://+:5000
 ENV ASPNETCORE_ENVIRONMENT=Production
