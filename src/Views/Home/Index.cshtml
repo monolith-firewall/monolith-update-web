@@ -1,0 +1,161 @@
+@model PublicHomeViewModel
+@{
+    ViewData["Title"] = "Home";
+    Layout = "_PublicLayout";
+}
+
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="mb-4">Firewall Firmware Updates</h2>
+
+        @if (!Model.FirewallVersions.Any())
+        {
+            <div class="alert alert-info">
+                <strong>No updates available yet.</strong> Check back later for firmware updates.
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var version in Model.FirewallVersions)
+                {
+                    <div class="col">
+                        <div class="card h-100 update-card">
+                            <div class="card-body">
+                                <h5 class="card-title">@version.DisplayName</h5>
+                                <p class="text-muted mb-3">Version @version.Version</p>
+                                <p class="text-muted small">
+                                    <strong>Released:</strong> @version.ReleaseDate.ToString("MMM dd, yyyy")
+                                </p>
+
+                                @if (version.FirewallUpdates.Any())
+                                {
+                                    <hr />
+                                    <h6 class="mb-2">Available Updates (@version.FirewallUpdates.Count)</h6>
+                                    <div class="list-group list-group-flush">
+                                        @foreach (var update in version.FirewallUpdates.OrderByDescending(u => u.ReleaseDate).Take(3))
+                                        {
+                                            <div class="list-group-item px-0 py-2">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-bold small">
+                                                            @update.FileName
+                                                            @if (update.IsCritical)
+                                                            {
+                                                                <span class="critical-badge ms-1">CRITICAL</span>
+                                                            }
+                                                        </div>
+                                                        <div class="text-muted" style="font-size: 0.75rem;">
+                                                            @update.ReleaseDate.ToString("MMM dd, yyyy") • @FormatFileSize(update.FileSize)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <a href="/api/firewall-update/@update.Id/download" class="btn btn-sm btn-primary mt-2">
+                                                    Download
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (version.FirewallUpdates.Count > 3)
+                                    {
+                                        <p class="text-muted small mt-2">+ @(version.FirewallUpdates.Count - 3) more update(s)</p>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted small mt-2">No updates available</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">Software Packages</h2>
+
+        @if (!Model.Packages.Any())
+        {
+            <div class="alert alert-info">
+                <strong>No packages available yet.</strong> Check back later for software packages.
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                @foreach (var package in Model.Packages)
+                {
+                    <div class="col">
+                        <div class="card update-card">
+                            <div class="card-body">
+                                <h5 class="card-title">@package.PackageName</h5>
+                                <p class="badge bg-secondary mb-2">@package.PackageCode</p>
+                                @if (!string.IsNullOrEmpty(package.Description))
+                                {
+                                    <p class="text-muted small">@package.Description</p>
+                                }
+
+                                @if (package.PackageUpdates.Any())
+                                {
+                                    <hr />
+                                    <h6 class="mb-2">Latest Updates (@package.PackageUpdates.Count)</h6>
+                                    <div class="list-group list-group-flush">
+                                        @foreach (var update in package.PackageUpdates.OrderByDescending(u => u.ReleaseDate).Take(3))
+                                        {
+                                            <div class="list-group-item px-0 py-2">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-bold small">
+                                                            @update.FileName
+                                                            @if (update.IsCritical)
+                                                            {
+                                                                <span class="critical-badge ms-1">CRITICAL</span>
+                                                            }
+                                                        </div>
+                                                        <div class="text-muted" style="font-size: 0.75rem;">
+                                                            @update.ReleaseDate.ToString("MMM dd, yyyy") • @FormatFileSize(update.FileSize)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <a href="/api/package-update/@update.Id/download" class="btn btn-sm btn-primary mt-2">
+                                                    Download
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (package.PackageUpdates.Count > 3)
+                                    {
+                                        <p class="text-muted small mt-2">+ @(package.PackageUpdates.Count - 3) more update(s)</p>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted small mt-2">No updates available</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        double len = bytes;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len = len / 1024;
+        }
+        return $"{len:0.##} {sizes[order]}";
+    }
+}
