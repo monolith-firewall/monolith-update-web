@@ -27,6 +27,7 @@ public class PasswordChangeRequiredMiddleware
                     "/Account/Setup2FA",
                     "/Account/ShowRecoveryCodes",
                     "/Account/LoginWith2FA",
+                    "/Account/EditProfile",
                     "/css/",
                     "/js/",
                     "/lib/"

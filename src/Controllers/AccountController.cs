@@ -332,4 +332,88 @@ public class AccountController : Controller
         ModelState.AddModelError(nameof(model.TwoFactorCode), "Invalid authenticator code or recovery code.");
         return View(model);
     }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> EditProfile()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return RedirectToAction(nameof(Login));
+        }
+
+        var model = new EditProfileViewModel
+        {
+            Email = user.Email ?? string.Empty,
+            PhoneNumber = user.PhoneNumber,
+            UserName = user.UserName ?? string.Empty
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return RedirectToAction(nameof(Login));
+        }
+
+        bool needsReSignIn = false;
+
+        // Update email if changed
+        if (model.Email != user.Email)
+        {
+            var emailExists = await _userManager.FindByEmailAsync(model.Email);
+            if (emailExists != null && emailExists.Id != user.Id)
+            {
+                ModelState.AddModelError(nameof(model.Email), "This email is already in use.");
+                return View(model);
+            }
+
+            user.Email = model.Email;
+            user.NormalizedEmail = model.Email.ToUpperInvariant();
+            user.UserName = model.Email;
+            user.NormalizedUserName = model.Email.ToUpperInvariant();
+            user.EmailConfirmed = true;
+            needsReSignIn = true;
+        }
+
+        // Update phone number
+        if (model.PhoneNumber != user.PhoneNumber)
+        {
+            user.PhoneNumber = model.PhoneNumber;
+            user.PhoneNumberConfirmed = !string.IsNullOrEmpty(model.PhoneNumber);
+        }
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return View(model);
+        }
+
+        TempData["Success"] = "Profile updated successfully!";
+
+        // Re-sign in the user if email was changed
+        if (needsReSignIn)
+        {
+            await _signInManager.RefreshSignInAsync(user);
+        }
+
+        return RedirectToAction(nameof(EditProfile));
+    }
 }
