@@ -1,0 +1,94 @@
+@model List<PackageUpdate>
+@{
+    ViewData["Title"] = "Package Updates";
+    var packages = ViewBag.Packages as List<MonolithPackage>;
+    var selectedPackageId = ViewBag.SelectedPackageId as int?;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Package Updates</h1>
+    <a href="/Admin/PackageUpdates/Create" class="btn btn-primary">Upload New Update</a>
+</div>
+
+<div class="mb-3">
+    <form method="get" class="row g-3">
+        <div class="col-auto">
+            <label for="packageFilter" class="col-form-label">Filter by Package:</label>
+        </div>
+        <div class="col-auto">
+            <select name="packageId" id="packageFilter" class="form-select" onchange="this.form.submit()">
+                <option value="">All Packages</option>
+                @if (packages != null)
+                {
+                    @foreach (var pkg in packages)
+                    {
+                        <option value="@pkg.Id" selected="@(selectedPackageId == pkg.Id)">@pkg.PackageName (@pkg.PackageCode)</option>
+                    }
+                }
+            </select>
+        </div>
+    </form>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Package</th>
+                    <th>Version</th>
+                    <th>Release Date</th>
+                    <th>File Size</th>
+                    <th>Status</th>
+                    <th>Critical</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var update in Model)
+                {
+                    <tr>
+                        <td><strong>@update.Package.PackageName</strong></td>
+                        <td>@update.Version</td>
+                        <td>@update.ReleaseDate.ToString("MMM dd, yyyy")</td>
+                        <td>@((update.FileSize / 1024.0 / 1024.0).ToString("F2")) MB</td>
+                        <td>
+                            @if (update.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                        <td>
+                            @if (update.IsCritical)
+                            {
+                                <span class="badge bg-danger">Yes</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">No</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="/Admin/PackageUpdates/Edit/@update.Id" class="btn btn-sm btn-warning">Edit</a>
+                            <form method="post" action="/Admin/PackageUpdates/Delete/@update.Id" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this update?');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        No package updates found. <a href="/Admin/PackageUpdates/Create">Upload your first package update</a>
+    </div>
+}

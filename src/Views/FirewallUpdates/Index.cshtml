@@ -1,0 +1,70 @@
+@model List<FirewallUpdate>
+@{
+    ViewData["Title"] = "Firewall Updates";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Firewall Updates</h1>
+    <a href="/Admin/FirewallUpdates/Create" class="btn btn-primary">Upload New Update</a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Firewall Version</th>
+                    <th>Release Date</th>
+                    <th>File Size</th>
+                    <th>Status</th>
+                    <th>Critical</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var update in Model)
+                {
+                    <tr>
+                        <td><strong>@update.FirewallVersion.DisplayName</strong> <small class="text-muted">(@update.FirewallVersion.Version)</small></td>
+                        <td>@update.ReleaseDate.ToString("MMM dd, yyyy")</td>
+                        <td>@((update.FileSize / 1024.0 / 1024.0).ToString("F2")) MB</td>
+                        <td>
+                            @if (update.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                        <td>
+                            @if (update.IsCritical)
+                            {
+                                <span class="badge bg-danger">Yes</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">No</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="/Admin/FirewallUpdates/Edit/@update.Id" class="btn btn-sm btn-warning">Edit</a>
+                            <form method="post" action="/Admin/FirewallUpdates/Delete/@update.Id" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this update?');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        No firewall updates found. <a href="/Admin/FirewallUpdates/Create">Upload your first update</a>
+    </div>
+}

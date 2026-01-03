@@ -1,0 +1,85 @@
+@model PackageUpdateViewModel
+@{
+    ViewData["Title"] = "Upload Package Update";
+}
+
+<h1 class="mb-4">Upload New Package Update</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="PackageId" class="form-label"></label>
+                        <select asp-for="PackageId" asp-items="Model.AvailablePackages" class="form-select">
+                            <option value="">-- Select Package --</option>
+                        </select>
+                        <span asp-validation-for="PackageId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Version" class="form-label"></label>
+                        <input asp-for="Version" class="form-control" placeholder="e.g., 1.0.0" />
+                        <span asp-validation-for="Version" class="text-danger"></span>
+                        <small class="form-text text-muted">Use semantic versioning (Major.Minor.Patch)</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ReleaseDate" class="form-label"></label>
+                        <input asp-for="ReleaseDate" class="form-control" type="date" />
+                        <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PackageFile" class="form-label"></label>
+                        <input asp-for="PackageFile" class="form-control" type="file" />
+                        <span asp-validation-for="PackageFile" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ReleaseNotes" class="form-label"></label>
+                        <textarea asp-for="ReleaseNotes" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="ReleaseNotes" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="MinimumPackageVersion" class="form-label"></label>
+                        <input asp-for="MinimumPackageVersion" class="form-control" placeholder="e.g., 0.9.0" />
+                        <span asp-validation-for="MinimumPackageVersion" class="text-danger"></span>
+                        <small class="form-text text-muted">Optional: Minimum package version required to apply this update</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="RequiredFirewallVersionId" class="form-label"></label>
+                        <input asp-for="RequiredFirewallVersionId" class="form-control" placeholder="e.g., 2.0.0" />
+                        <span asp-validation-for="RequiredFirewallVersionId" class="text-danger"></span>
+                        <small class="form-text text-muted">Optional: Minimum firewall version required for this package</small>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="IsCritical" class="form-check-input" />
+                        <label asp-for="IsCritical" class="form-check-label"></label>
+                        <small class="form-text text-muted d-block">Mark as critical for security updates</small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Upload Update</button>
+                        <a href="/Admin/PackageUpdates" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

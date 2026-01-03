@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  monolith-updatesite:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: monolith-updatesite:latest
+    container_name: monolith-updatesite
+    ports:
+      - "5000:5000"
+    volumes:
+      # Persist database
+      - ./data:/app/data
+      # Persist uploaded update files
+      - ./wwwroot/updates:/app/wwwroot/updates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      # Override database path to use volume
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/monolith_updates.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/Account/Login"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - monolith-network
+
+networks:
+  monolith-network:
+    driver: bridge
+
+volumes:
+  monolith-data:
+  monolith-updates:

@@ -1,0 +1,122 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    var firewallVersionsCount = ViewBag.FirewallVersionsCount;
+    var firewallUpdatesCount = ViewBag.FirewallUpdatesCount;
+    var packagesCount = ViewBag.PackagesCount;
+    var packageUpdatesCount = ViewBag.PackageUpdatesCount;
+    var recentFirewallUpdates = ViewBag.RecentFirewallUpdates as List<FirewallUpdate>;
+    var recentPackageUpdates = ViewBag.RecentPackageUpdates as List<PackageUpdate>;
+}
+
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title">Firewall Versions</h5>
+                <h2 class="card-text">@firewallVersionsCount</h2>
+                <a href="/Admin/FirewallVersions" class="text-white">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Firewall Updates</h5>
+                <h2 class="card-text">@firewallUpdatesCount</h2>
+                <a href="/Admin/FirewallUpdates" class="text-white">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Packages</h5>
+                <h2 class="card-text">@packagesCount</h2>
+                <a href="/Admin/Packages" class="text-white">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Package Updates</h5>
+                <h2 class="card-text">@packageUpdatesCount</h2>
+                <a href="/Admin/PackageUpdates" class="text-white">View All</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Firewall Updates</h5>
+            </div>
+            <div class="card-body">
+                @if (recentFirewallUpdates?.Any() == true)
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var update in recentFirewallUpdates)
+                        {
+                            <li class="list-group-item">
+                                <strong>@update.FirewallVersion.DisplayName</strong>
+                                @if (update.IsCritical)
+                                {
+                                    <span class="badge bg-danger">Critical</span>
+                                }
+                                @if (!update.IsActive)
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                                <br />
+                                <small class="text-muted">@update.ReleaseDate.ToString("MMM dd, yyyy")</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">No firewall updates yet.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Package Updates</h5>
+            </div>
+            <div class="card-body">
+                @if (recentPackageUpdates?.Any() == true)
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var update in recentPackageUpdates)
+                        {
+                            <li class="list-group-item">
+                                <strong>@update.Package.PackageName v@update.Version</strong>
+                                @if (update.IsCritical)
+                                {
+                                    <span class="badge bg-danger">Critical</span>
+                                }
+                                @if (!update.IsActive)
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                                <br />
+                                <small class="text-muted">@update.ReleaseDate.ToString("MMM dd, yyyy")</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">No package updates yet.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+@model List<FirewallVersion>
+@{
+    ViewData["Title"] = "Firewall Versions";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Firewall Versions</h1>
+    <a href="/Admin/FirewallVersions/Create" class="btn btn-primary">Create New Version</a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Display Name</th>
+                    <th>Version</th>
+                    <th>Release Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var version in Model)
+                {
+                    <tr>
+                        <td><strong>@version.DisplayName</strong></td>
+                        <td><code>@version.Version</code></td>
+                        <td>@version.ReleaseDate.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            @if (version.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="/Admin/FirewallVersions/Edit/@version.Id" class="btn btn-sm btn-warning">Edit</a>
+                            <form method="post" action="/Admin/FirewallVersions/Delete/@version.Id" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure? This will affect all linked updates.');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        No firewall versions found. <a href="/Admin/FirewallVersions/Create">Create your first version</a>
+    </div>
+}
