@@ -170,15 +170,24 @@ body {
     background-color: #21262d;
 }
 
-.table > thead > tr {
-    background-color: #0d1117;
+.table > thead {
     border-bottom: 2px solid #30363d;
 }
 
+.table > thead > tr {
+    background-color: #0d1117 !important;
+    border: none;
+}
+
 .table > thead > tr > th {
-    color: #c9d1d9;
-    font-weight: 600;
-    border-color: #30363d;
+    background-color: #0d1117 !important;
+    color: #c9d1d9 !important;
+    font-weight: 700 !important;
+    border-color: #30363d !important;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    padding: 1rem 0.75rem;
 }
 
 .table > tbody > tr > td {
