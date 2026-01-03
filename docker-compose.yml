@@ -8,7 +8,7 @@ services:
     image: monolith-updatesite:latest
     container_name: monolith-updatesite
     ports:
-      - "5000:5000"
+      - "5002:5000"
     volumes:
       # Persist database
       - ./data:/app/data

@@ -74,3 +74,4 @@ docker-compose.override.yml
 *.backup
 *.bak
 backups/
+.claude/settings.local.json

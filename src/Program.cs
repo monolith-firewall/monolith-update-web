@@ -65,7 +65,11 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
         var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
 
-        context.Database.Migrate();
+        var pending = await context.Database.GetPendingMigrationsAsync();
+if (pending.Any())
+    await context.Database.MigrateAsync();
+else
+    await context.Database.EnsureCreatedAsync();
 
         if (!context.Users.Any())
         {
