@@ -69,11 +69,17 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
+        // Apply pending migrations
         var pending = await context.Database.GetPendingMigrationsAsync();
-if (pending.Any())
-    await context.Database.MigrateAsync();
-else
-    await context.Database.EnsureCreatedAsync();
+        if (pending.Any())
+        {
+            await context.Database.MigrateAsync();
+        }
+        else
+        {
+            // Ensure database is created if no migrations exist
+            await context.Database.EnsureCreatedAsync();
+        }
 
         if (!context.Users.Any())
         {
