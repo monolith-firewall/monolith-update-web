@@ -54,6 +54,7 @@ public class PackagesController : Controller
             PackageName = model.PackageName,
             PackageCode = model.PackageCode,
             Description = model.Description,
+            Category = string.IsNullOrWhiteSpace(model.Category) ? "Other" : model.Category.Trim(),
             IsActive = model.IsActive,
             CreatedAt = DateTime.UtcNow
         };
@@ -79,6 +80,7 @@ public class PackagesController : Controller
             PackageName = package.PackageName,
             PackageCode = package.PackageCode,
             Description = package.Description,
+            Category = package.Category,
             IsActive = package.IsActive
         };
 
@@ -108,6 +110,7 @@ public class PackagesController : Controller
         package.PackageName = model.PackageName;
         package.PackageCode = model.PackageCode;
         package.Description = model.Description;
+        package.Category = string.IsNullOrWhiteSpace(model.Category) ? "Other" : model.Category.Trim();
         package.IsActive = model.IsActive;
 
         await _context.SaveChangesAsync();

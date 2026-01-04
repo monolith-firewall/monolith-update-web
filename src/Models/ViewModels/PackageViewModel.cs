@@ -17,6 +17,10 @@ public class PackageViewModel
     [Display(Name = "Description")]
     public string Description { get; set; } = string.Empty;
 
+    [Required]
+    [Display(Name = "Category")]
+    public string Category { get; set; } = "Other";
+
     [Display(Name = "Is Active")]
     public bool IsActive { get; set; } = true;
 }

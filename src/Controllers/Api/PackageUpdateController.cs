@@ -77,6 +77,7 @@ public class PackageUpdateController : ControllerBase
                 name = package.PackageName,
                 version = latestUpdate.Version,
                 description = package.Description,
+                category = package.Category,
                 downloadUrl,
                 sha256 = string.IsNullOrWhiteSpace(latestUpdate.FileHash) ? null : latestUpdate.FileHash,
                 releaseNotes = string.IsNullOrWhiteSpace(latestUpdate.ReleaseNotes) ? null : latestUpdate.ReleaseNotes,

@@ -60,6 +60,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PackageName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.PackageCode).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Category).IsRequired().HasMaxLength(50);
             entity.HasIndex(e => e.PackageCode).IsUnique();
         });
 
