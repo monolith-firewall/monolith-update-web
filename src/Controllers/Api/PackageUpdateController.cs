@@ -23,6 +23,71 @@ public class PackageUpdateController : ControllerBase
         _context = context;
     }
 
+    /// <summary>
+    /// Package feed endpoint consumed by Monolith.FireWall.WebUI (PackageUpdatesClient).
+    ///
+    /// WebUI calls: GET {BaseUrl}?version={coreVersion}
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> Feed([FromQuery] string? version = null)
+    {
+        // In the firewall WebUI, the query param is named "version".
+        // This corresponds to the firewall/core version. We reuse it as our compatibility filter.
+        var firewallVersion = version;
+
+        var packages = await _context.MonolithPackages
+            .Include(p => p.PackageUpdates)
+                .ThenInclude(u => u.RequiredFirewallVersion)
+            .Where(p => p.IsActive)
+            .ToListAsync();
+
+        var hostBase = $"{Request.Scheme}://{Request.Host}";
+
+        var results = new List<object>();
+        foreach (var package in packages)
+        {
+            var latestUpdate = package.PackageUpdates
+                .Where(u => u.IsActive)
+                .OrderByDescending(u => u.ReleaseDate)
+                .FirstOrDefault();
+
+            if (latestUpdate == null)
+            {
+                continue;
+            }
+
+            if (!string.IsNullOrWhiteSpace(firewallVersion) && latestUpdate.RequiredFirewallVersion != null)
+            {
+                var required = latestUpdate.RequiredFirewallVersion.Version;
+                var compatible =
+                    _updateService.CompareVersions(firewallVersion, required) ||
+                    string.Equals(firewallVersion, required, StringComparison.Ordinal);
+
+                if (!compatible)
+                {
+                    continue;
+                }
+            }
+
+            var downloadUrl = $"{hostBase}/api/v1/packages/download/{package.PackageCode}/{latestUpdate.Version}";
+
+            results.Add(new
+            {
+                id = package.PackageCode,
+                name = package.PackageName,
+                version = latestUpdate.Version,
+                description = package.Description,
+                downloadUrl,
+                sha256 = string.IsNullOrWhiteSpace(latestUpdate.FileHash) ? null : latestUpdate.FileHash,
+                releaseNotes = string.IsNullOrWhiteSpace(latestUpdate.ReleaseNotes) ? null : latestUpdate.ReleaseNotes,
+                minCoreVersion = latestUpdate.RequiredFirewallVersion?.Version,
+                requiresRestart = false
+            });
+        }
+
+        return Ok(new { packages = results });
+    }
+
     [HttpGet("check-update")]
     public IActionResult CheckUpdate(
         [FromQuery] string packageCode,
