@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MonolithUpdateSite.Data;
 using MonolithUpdateSite.Services;
+using MonolithUpdateSite.Models.Domain;
 
 namespace MonolithUpdateSite.Controllers.Api;
 
@@ -37,11 +38,40 @@ public class PackageUpdateController : ControllerBase
             // This corresponds to the firewall/core version. We reuse it as our compatibility filter.
             var firewallVersion = version;
 
-            var packages = await _context.MonolithPackages
-                .Include(p => p.PackageUpdates)
-                    .ThenInclude(u => u.RequiredFirewallVersion)
-                .Where(p => p.IsActive)
-                .ToListAsync();
+            // Try to query normally first, but handle missing Category column
+            List<MonolithPackage> packages;
+            try
+            {
+                packages = await _context.MonolithPackages
+                    .Include(p => p.PackageUpdates)
+                        .ThenInclude(u => u.RequiredFirewallVersion)
+                    .Where(p => p.IsActive)
+                    .ToListAsync();
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException ex) when (ex.Message.Contains("no such column") && ex.Message.Contains("Category"))
+            {
+                // Category column doesn't exist - add it and retry
+                try
+                {
+                    // SQLite: Add column with default value
+                    // If column already exists, this will fail but that's OK
+                    await _context.Database.ExecuteSqlRawAsync(@"
+                        ALTER TABLE MonolithPackages 
+                        ADD COLUMN Category TEXT DEFAULT 'Other';
+                    ");
+                }
+                catch (Microsoft.Data.Sqlite.SqliteException)
+                {
+                    // Column might already exist (race condition), that's OK
+                }
+                
+                // Retry the query (column should exist now, or it was added by another request)
+                packages = await _context.MonolithPackages
+                    .Include(p => p.PackageUpdates)
+                        .ThenInclude(u => u.RequiredFirewallVersion)
+                    .Where(p => p.IsActive)
+                    .ToListAsync();
+            }
 
             var hostBase = $"{Request.Scheme}://{Request.Host}";
 

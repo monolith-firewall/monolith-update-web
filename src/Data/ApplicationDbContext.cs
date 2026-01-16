@@ -60,7 +60,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PackageName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.PackageCode).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.Category).IsRequired().HasMaxLength(50);
+            // Category is nullable to handle databases that haven't run the migration yet
+            entity.Property(e => e.Category).HasMaxLength(50).HasDefaultValue("Other");
             entity.HasIndex(e => e.PackageCode).IsUnique();
         });
 
